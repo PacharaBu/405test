@@ -38,11 +38,11 @@
   <br>
   <div class="container">
     <div class="row">
-        <div class="col" style="text-align: center;">
-            <button class="btn btn-primary btn-lg active btn-block" role="button" aria-pressed="true"><i class="fas fa-male fa-lg"></i></button>
+        <div class="col" id="maleBtn" style="text-align: center;">
+            <button onclick="menfilter()" class="btn btn-primary active btn-lg btn-block" role="button" aria-pressed="true"><i class="fas fa-male fa-lg"></i></button>
         </div>
-        <div class="col" style="text-align: center;">
-            <button class="btn btn-primary btn-lg active btn-block" role="button" aria-pressed="true"><i class="fas fa-female fa-lg"></i></button>
+        <div class="col" id="femaleBtn" style="text-align: center;">
+            <button onclick="womenfilter()" class="btn btn-primary btn-lg active btn-block" role="button" aria-pressed="true"><i class="fas fa-female fa-lg"></i></button>
         </div>
         <div class="col" style="text-align: center;">
             <button class="btn btn-primary btn-lg active btn-block" role="button" aria-pressed="true"><i class="fas fa-wheelchair fa-lg"></i></button>
@@ -53,7 +53,7 @@
     </div>
 </div>
   <script>
-    function initMap(){
+    function initMap(filter="0000"){
       // Map options
       var options = {
         zoom:15,
@@ -70,6 +70,7 @@
         icon:'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
       });
 
+
       var infoWindow = new google.maps.InfoWindow({
         content:'<h1>Lynn MA</h1>'
       });
@@ -78,27 +79,49 @@
         infoWindow.open(map, marker);
       });
       
+      console.log(filter);
 
-      // Add of markers
-      
+      if(filter[0]=='0')
+      {
         addMarker({
           coords:{lat:18.792833,lng:98.954896},
-          content:'<h3>Toilet Point 1</h3>'+ '<a href="https://www.google.com/"><h4>status<h4></a>'
-        });
-        addMarker({
-          coords:{lat:18.793646,lng:98.952953},
-          content:'<h3>Toilet Point 2</h3>'
-        });
+          content:'<h3>Toilet Point 1</h3>'+ '<h4 id="T00"> None </h4>',
+          str_id: "T00",
+          type: "Male",
+        });    
+
         addMarker({
           coords:{lat:18.794561,lng:98.951421},
-          content:'<h3>Toilet Point 3</h3>'
+          content:'<h3>Toilet Point 3</h3>'+ '<h4 id="roomLeft3"> None </h4>',
+          str_id: "roomLeft3",
+          type: "Male",
         });
+      }
+      if(filter[1]=='0')
+      {
         addMarker({
-          coords:{lat:18.793327,lng:98.953147},
-          content:'<h3>Toilet Point 4</h3>'
+          coords:{lat:18.793646,lng:98.952953},
+          content:'<h3>Toilet Point 2</h3>'+ '<h4 id="T01"> None </h4>',
+          str_id: "T01",
+          type: "FeMale",
         });
-        
 
+        addMarker({
+          coords:{lat:18.793822,lng:98.951321},
+          content:'<h3>Toilet Point 3</h3>'+ '<h4 id="roomLeft3"> None </h4>',
+          str_id: "roomLeft3",
+          type: "FeMale",
+        });
+      }
+      // Add of markers
+
+       /* addMarker({
+          coords:{lat:18.793327,lng:98.953147},
+          content:'<h3>Toilet Point 4</h3>'+ '<h4 id="roomLeft4"> None </h4>',
+          str_id: "roomLeft4",
+        });*/
+
+       
       // Loop through markers
       //for(var i = 0;i < markers.length;i++){
         // Add marker
@@ -127,10 +150,104 @@
           });
           marker.addListener('click', function(){
             infoWindow.open(map, marker);
+            //console.log(props.str_id);
+            show_status(props.str_id);
           });
         }
       }
     }
+
+    var glb = ['0','0','0','0'];
+
+    function menfilter(){
+      
+        if(glb[0]=="0"){
+          glb[0]="1";
+          document.getElementById("maleBtn").innerHTML = '<button onclick="menfilter()" class="btn btn-secondary btn-lg btn-block" role="button" aria-pressed="true"><i class="fas fa-male fa-lg"></i></button>';
+        }else if(glb[0]=="1"){
+          glb[0]="0";
+          document.getElementById("maleBtn").innerHTML = '<button onclick="menfilter()" class="btn btn-primary active btn-lg btn-block" role="button" aria-pressed="true"><i class="fas fa-male fa-lg"></i></button>';
+        }
+        initMap(glb);
+        /*
+        addMarker({
+          coords:{lat:18.793327,lng:98.953147},
+          content:'<h3>Toilet Point 4</h3>'+ '<h4 id="roomLeft4"> None </h4>',
+          str_id: "roomLeft4",
+        });*/
+    }
+    function womenfilter(){
+        
+        if(glb[1]=="0"){
+          glb[1]="1";
+          document.getElementById("femaleBtn").innerHTML = '<button onclick="womenfilter()" class="btn btn-secondary btn-lg active btn-block" role="button" aria-pressed="true"><i class="fas fa-female fa-lg"></i></button>';
+        }
+        else if(glb[1]=="1"){
+          glb[1]="0";
+          document.getElementById("femaleBtn").innerHTML = '<button onclick="womenfilter()" class="btn btn-primary btn-lg active btn-block" role="button" aria-pressed="true"><i class="fas fa-female fa-lg"></i></button>';
+        }
+        initMap(glb);
+        /*
+        addMarker({
+          coords:{lat:18.793327,lng:98.953147},
+          content:'<h3>Toilet Point 4</h3>'+ '<h4 id="roomLeft4"> None </h4>',
+          str_id: "roomLeft4",
+        });*/
+    }
+
   </script>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase.js"></script>
+
+<script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    var firebaseConfig = {
+        apiKey: "AIzaSyBlWJCqRVyrkzJPfLgJ0W150dKuXhgJ_SI",
+        authDomain: "cpe-smart-toilet.firebaseapp.com",
+        databaseURL: "https://cpe-smart-toilet.firebaseio.com",
+        projectId: "cpe-smart-toilet",
+        storageBucket: "cpe-smart-toilet.appspot.com",
+        messagingSenderId: "938159672194",
+        appId: "1:938159672194:web:9e172e2384bd62ef0fdd9b",
+        measurementId: "G-LHS7RK53EW"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    //-------------------------------------------------------------------------------
+    function show_status(str_id)
+    {
+      var ref = firebase.database().ref(str_id+'/room_status');
+      ref.endAt().limitToLast(1).on("child_added", function (snapshot) {
+          console.log(snapshot.val());
+          var str = snapshot.val();
+          var res = str.split("|");
+          var length_res = res.length - 1;
+          var show = "";
+          var cnt = 0;
+          for (var i = 0; i < res.length - 1; i++) {
+              if (res[i] == "1") {
+                  show += '<span class="dotr"></span>\n';
+              } else if (res[i] == "-1") {
+                  show += '<span class="dot"></span>\n';
+                  length_res -= 1;
+              } else {
+                  show += '<span class="dotg"></span>\n';
+                  cnt += 1;
+              }
+          }
+          console.log(str_id);
+          document.getElementById(str_id).innerHTML = cnt.toString() + "/" + (length_res).toString();
+          //console.log(cnt.toString() + "/" + (res.length - 1).toString());
+          //setTimeout( function(){ document.getElementById('roomLeft').innerHTML = cnt.toString() + "/" + (length_res).toString(); } , 3000);
+          //setTimeout(function(){ document.getElementById("roomLeft_2").innerHTML=cnt.toString() + "/" + (length_res).toString(); }, 3000);
+
+          //console.log(res);
+      });
+  }
+
+</script>
 </body>
 </html>
